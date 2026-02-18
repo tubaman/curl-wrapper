@@ -32,4 +32,4 @@ class Response:
     def raise_for_status(self):
         from .exceptions import HTTPError
         if 400 <= self.status_code < 600:
-            raise HTTPError(f"HTTP {self.status_code}", response=self)
+            raise HTTPError(self.status_code, response=self)
