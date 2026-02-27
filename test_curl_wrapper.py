@@ -57,6 +57,15 @@ class TestParseResponse:
         resp = parse_response(output, 'http://example.com')
         assert resp.status_code == 200
         assert len(resp.history) == 0
+    
+    def test_parse_binary_data(self):
+        # JPEG magic bytes followed by some data
+        jpeg_data = b'\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x02\x00\x00\x01\x00\x01\x00\x00'
+        output = b'HTTP/1.1 200 OK\r\nContent-Type: image/jpeg\r\n\r\n' + jpeg_data
+        resp = parse_response(output, 'http://example.com')
+        assert resp.status_code == 200
+        assert resp.content == jpeg_data
+        assert resp.content[:4] == b'\xff\xd8\xff\xe0'
 
 class TestResponse:
     def test_json_parsing(self):

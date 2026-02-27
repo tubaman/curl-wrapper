@@ -62,12 +62,12 @@ def parse_headers(header_section):
     return status_code, headers
 
 def parse_response(output, request_url):
-    output_str = output.decode('utf-8', errors='replace')
-    
-    if '__FINAL_URL__:' in output_str:
-        parts = output_str.rsplit('__FINAL_URL__:', 1)
-        response_data = parts[0].encode('utf-8')
-        final_url = parts[1].strip()
+    # Extract final URL marker without decoding entire output
+    final_url_marker = b'__FINAL_URL__:'
+    if final_url_marker in output:
+        marker_idx = output.rfind(final_url_marker)
+        response_data = output[:marker_idx]
+        final_url = output[marker_idx + len(final_url_marker):].decode('utf-8', errors='replace').strip()
     else:
         response_data = output
         final_url = request_url
@@ -99,7 +99,7 @@ def parse_response(output, request_url):
     
     # Parse final response
     status_code, headers = parse_headers(header_sections[-1])
-    body = b'\n\n'.join(parts[body_start_idx:]) if body_start_idx < len(parts) else b''
+    body = b'\r\n\r\n'.join(parts[body_start_idx:]) if body_start_idx < len(parts) else b''
     
     return Response(status_code, headers, body, final_url, history)
 
