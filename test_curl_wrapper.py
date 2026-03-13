@@ -58,6 +58,11 @@ class TestParseResponse:
         assert resp.status_code == 200
         assert len(resp.history) == 0
     
+    def test_parse_duplicate_headers(self):
+        output = b'HTTP/1.1 200 OK\r\nSet-Cookie: a=1\r\nSet-Cookie: b=2\r\n\r\nbody'
+        resp = parse_response(output, 'http://example.com')
+        assert resp.headers.getall('Set-Cookie') == ['a=1', 'b=2']
+
     def test_parse_binary_data(self):
         # JPEG magic bytes followed by some data
         jpeg_data = b'\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x02\x00\x00\x01\x00\x01\x00\x00'

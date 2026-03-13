@@ -6,6 +6,7 @@ authors = [
 ]
 description = "A Python wrapper for curl with a requests-like interface"
 readme = "README.md"
+dependencies = ["multidict"]
 requires-python = ">=3.12"
 license-files = ["LICENSE"]
 classifiers = [

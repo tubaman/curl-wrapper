@@ -1,6 +1,7 @@
 import subprocess
 import json as json_lib
 from urllib.parse import urlencode
+from multidict import CIMultiDict
 from .response import Response
 from .exceptions import CurlError, Timeout
 
@@ -53,11 +54,11 @@ def parse_headers(header_section):
     lines = header_str.split('\n')
     status_code = int(lines[0].split()[1])
     
-    headers = {}
+    headers = CIMultiDict()
     for line in lines[1:]:
         if ':' in line:
             key, value = line.split(':', 1)
-            headers[key.strip()] = value.strip()
+            headers.add(key.strip(), value.strip())
     
     return status_code, headers
 
