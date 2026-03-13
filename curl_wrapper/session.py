@@ -27,20 +27,23 @@ class Session:
     def __del__(self):
         self.close()
     
+    def request(self, method, url, **kwargs):
+        return execute_request(method, url, **self._merge_kwargs(kwargs))
+    
     def get(self, url, **kwargs):
-        return execute_request('GET', url, **self._merge_kwargs(kwargs))
+        return self.request('GET', url, **kwargs)
     
     def post(self, url, **kwargs):
-        return execute_request('POST', url, **self._merge_kwargs(kwargs))
+        return self.request('POST', url, **kwargs)
     
     def put(self, url, **kwargs):
-        return execute_request('PUT', url, **self._merge_kwargs(kwargs))
+        return self.request('PUT', url, **kwargs)
     
     def patch(self, url, **kwargs):
-        return execute_request('PATCH', url, **self._merge_kwargs(kwargs))
+        return self.request('PATCH', url, **kwargs)
     
     def delete(self, url, **kwargs):
-        return execute_request('DELETE', url, **self._merge_kwargs(kwargs))
+        return self.request('DELETE', url, **kwargs)
     
     def head(self, url, **kwargs):
-        return execute_request('HEAD', url, **self._merge_kwargs(kwargs))
+        return self.request('HEAD', url, **kwargs)

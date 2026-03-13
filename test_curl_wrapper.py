@@ -165,3 +165,12 @@ class TestSession:
         session.get('http://example.com')
         assert mock_run.call_args[0][0][0] == '/custom/curl'
         session.close()
+
+    def test_session_request_method(self, mock_run):
+        mock_run.return_value = MagicMock(returncode=0, stdout=b'HTTP/1.1 200 OK\r\n\r\n{}')
+        session = Session()
+        session.headers['X-Custom'] = 'test'
+        response = session.request('GET', 'http://example.com')
+        assert response.status_code == 200
+        assert any('X-Custom: test' in str(call) for call in mock_run.call_args_list)
+        session.close()
