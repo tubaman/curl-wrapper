@@ -5,11 +5,11 @@ from multidict import CIMultiDict
 from .response import Response
 from .exceptions import CurlError, Timeout
 
-def build_curl_command(method, url, headers=None, params=None, data=None, json=None, 
+def build_curl_command(url, method=None, headers=None, params=None, data=None, json=None, 
                        auth=None, timeout=None, verify=True, cookie_jar=None, allow_redirects=True, curl_path='curl'):
     cmd = [curl_path, '-s', '-i']
     
-    if method != 'GET':
+    if method:
         cmd.extend(['-X', method])
     
     if allow_redirects:
@@ -104,8 +104,8 @@ def parse_response(output, request_url):
     
     return Response(status_code, headers, body, final_url, history)
 
-def execute_request(method, url, **kwargs):
-    cmd = build_curl_command(method, url, **kwargs)
+def execute_request(url, method=None, **kwargs):
+    cmd = build_curl_command(url, method=method, **kwargs)
     
     result = subprocess.run(cmd, capture_output=True)
     

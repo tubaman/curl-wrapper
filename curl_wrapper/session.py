@@ -28,7 +28,7 @@ class Session:
         self.close()
     
     def request(self, method, url, **kwargs):
-        return execute_request(method, url, **self._merge_kwargs(kwargs))
+        return execute_request(url, method=method, **self._merge_kwargs(kwargs))
     
     def get(self, url, **kwargs):
         return self.request('GET', url, **kwargs)

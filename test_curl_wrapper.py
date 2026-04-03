@@ -7,24 +7,33 @@ from curl_wrapper.builder import build_curl_command, parse_response
 
 class TestBuildCurlCommand:
     def test_basic_get(self):
-        cmd = build_curl_command('GET', 'http://example.com')
+        cmd = build_curl_command('http://example.com')
         assert cmd == ['curl', '-s', '-i', '-L', '-w', '\n__FINAL_URL__:%{url_effective}', 'http://example.com']
     
     def test_with_headers(self):
-        cmd = build_curl_command('GET', 'http://example.com', headers={'User-Agent': 'test'})
+        cmd = build_curl_command('http://example.com', headers={'User-Agent': 'test'})
         assert '-H' in cmd and 'User-Agent: test' in cmd
     
     def test_with_json(self):
-        cmd = build_curl_command('POST', 'http://example.com', json={'key': 'value'})
+        cmd = build_curl_command('http://example.com', method='POST', json={'key': 'value'})
         assert '-d' in cmd and '{"key": "value"}' in cmd
     
     def test_with_auth(self):
-        cmd = build_curl_command('GET', 'http://example.com', auth=('user', 'pass'))
+        cmd = build_curl_command('http://example.com', auth=('user', 'pass'))
         assert '-u' in cmd and 'user:pass' in cmd
     
     def test_custom_curl_path(self):
-        cmd = build_curl_command('GET', 'http://example.com', curl_path='/custom/curl')
+        cmd = build_curl_command('http://example.com', curl_path='/custom/curl')
         assert cmd[0] == '/custom/curl'
+
+    def test_with_method(self):
+        cmd = build_curl_command('http://example.com', method='PUT')
+        assert '-X' in cmd and cmd[cmd.index('-X') + 1] == 'PUT'
+
+    def test_without_method(self):
+        cmd = build_curl_command('http://example.com', data='key=value')
+        assert '-X' not in cmd
+        assert '-d' in cmd
 
 class TestParseResponse:
     def test_parse_basic_response(self):
